@@ -1,0 +1,110 @@
+select * from Trabajador
+------------------------
+select id_trabajador, num_trabajador
+from Trabajador
+------------------------
+select * from Trabajador
+where sueldo_trabador>16,000;
+------------------------
+select id_trabajador, nom_trabajador, sueldo_trabajador
+from Trabajador
+where suledo_trabajador>16,000;
+------------------------
+select id_trabajador,sueldo_trabajador,desc_puesto
+from Trabajador, Puestos
+where puesto_trabajador=id_puesto;
+------------------------
+select id_trabajador,sueldo_trabajador,desc_puesto
+from Trabajador, Puestos
+where puesto_trabajador=id_puesto;
+and sexo_trab='F';
+------------------------
+select id_trabajador,sueldo_trabajador,desc_puesto
+from Trabajador, Puestos
+where puesto_trabajador=id_puesto;
+and sexo_trab='F';
+order by sueldo_trabajador asc;
+------------------------
+select id_trabajador,sueldo_trabajador,desc_puesto
+from Trabajador, Puestos
+where puesto_trabajador=id_puesto;
+and sexo_trab='F';
+order by sueldo_trabajador desc;
+-------------------------
+select id_trabajador,nom_trabajador,sueldo_trabajador
+from Trabajador
+where puesto_trabajador=3;
+or puesto:trabajador=1;
+-------------------------
+select nom_cte, num_cte
+from cat_clientes
+where apa_cte in ('GOMEZ','TORRES','ROSAS','SOLIZ')
+or ama_cte in ('GOMEZ','TORRES','ROSAS','SOLIZ');
+-------------------------
+select id_trabajador,nom_trabajador,sueldo_trabajador
+from Trabajador
+where sueldo_trabajador between 15,000 and 19,000;
+-------------------------
+insert into cat_puestos (id_puestos, desc_puestos) values (1,'DIRECTOR');
+insert into cat_puestos (id_puestos, desc_puestos) values (2,'SUBDIRECTOR');
+-------------------------
+insert into Trabajador values (1,'JOEL','MONROI','JIMENEZ','M','5534267218',);
+update Trabajador set tel_trabajador = '5534267218' where id_trabajador=1;
+-------------------------
+select apa_trabajador,num_trabajador,sueldo_trabajador,desc_puesto
+from Trabajador, cat_puestos
+where desc_puesto = id_puesto
+order by desc_puesto
+-------------------------
+LineAerea
+-------------------------
+select * from LineAerea.Trabajador;
+-------------------------
+SUELDO BRUTO
+-------------------------
+select id_trabajador,nom_trabajador,desc_triptra,canti_tra_nom
+canti_tra_nom * val_pago as sueldo_bruto
+from LineAerea.Trabajador,LineAerea.nomina,LineAerea.cat_tipo_tra,LineAerea.cat_pagos
+where id_triptra_emp = id_triptra
+and id_emp = id_emp_nomina
+and id_tipago_nomina = id_pago;
+-------------------------
+DESCUENTO POR FALTAS
+-------------------------
+faltas_nom * val_pago as descuento_faltas
+-------------------------
+CALCULO ISR, IMSS, EMTV
+-------------------------
+canti_tra_nom * val_pago * 
+(select val_imp from Lineaerea.cat_impuestos where id_imp=1)as ISR,
+(select val_imp from Lineaerea.cat_impuestos where id_imp=2)as Ietv,
+(select val_imp from Lineaerea.cat_impuestos where id_imp=3)as IMSS,
+-------------------------
+SUELDO NETO
+-------------------------
+canti_tra_nom * val_pago -
+{
+	(faltas_nom = val_pago)+
+	(select val_imp from Lineaerea.cat_impuestos where id_imp=1)as ISR,+
+	(select val_imp from Lineaerea.cat_impuestos where id_imp=2)as Ietv,+
+	(select val_imp from Lineaerea.cat_impuestos where id_imp=3)as IMSS,	
+{ as Sueldo_neto
+-------------------------
+VISTA
+------------------------
+create or replace view Lineaerea.calculo_nomina
+as
+
+select num_emp, isr, ietv, imss, sueldo_neto
+from Lineaerea.viw.calculo_nomina
+
+select 'total' ||Sum(sueldo_neto) 
+from Lineaerea.viw.caluclo_nomina
+where sex_emp ='F';
+
+select T.id_emp, T.nom_emp, ||' '|| T.apa_emp ||' '|| T.sex_emp, V.sueldo_neto as NOMBRE
+from LineAerea.cat_trabajador T, Lineaerea.caluclo_nomina V
+where T.id_emp = V.id_emp
+order by T.apa_emp;
+desc;
+asc;
